@@ -1,23 +1,19 @@
 # The qnap-dnsmasq image
 
 This repository builds a DNSMasq docker image that can be run on QNAP NAS
-servers.
+servers (for example, QNAP TS-451D2).
 
-I run the DNSMasq container on a QNAP TS-451D2 and send its logs to the syslog
-server on the same NAS.
-
-Here is an example compose file that can be used in the Container Station to
-start the DNSMasq container.
+Below is an example compose file that can be used in the Container Station to
+start the DNSMasq container. In this example, the DNSMasq logs are sent to the
+syslog server on the same NAS, and 192.168.1.100 is one of the NAS IPs.
 
 ```
 version: '3'
 
 services:
   dnsmasq:
-    image: bqbn/qnap-dnsmasq:latest
-    restart: on-failure
     container_name: dnsmasq
-    network_mode: host
+    image: bqbn/qnap-dnsmasq:latest
     logging:
       driver: syslog
       options:
@@ -29,6 +25,10 @@ services:
         # You should use one of the NAS IPs instead, like the following example
         # shows.
         syslog-address: tcp://192.168.1.100:514
+    ports:
+      - 192.168.1.100:53/tcp
+      - 192.168.1.100:53/udp
+    restart: on-failure
 ```
 
 # Note
